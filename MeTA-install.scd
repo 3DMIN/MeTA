@@ -58,7 +58,7 @@ q.install = {|q, projectDir, protoDir, protos|
 			"install -d %".format(projectDir +/+ proto).postln.unixCmd;
 		}, {
 			"install -B .% -bC % %".format(
-				stamp
+				stamp,
 				protoDir +/+ proto,
 				projectDir +/+ proto
 			).postln.unixCmd;

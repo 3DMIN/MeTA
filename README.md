@@ -1,8 +1,8 @@
-MeTA -- a music-making architecture
-===================================
-as of 9.10.2015
+MeTA
+====
+*as of 9.10.2015*
 
-MeTA is a structured directory for SuperCollider performance systems.
+MeTA is a structured directory for [SuperCollider](http://supercollider.github.io) performance systems.
 
 ## Install
 
