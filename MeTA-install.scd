@@ -1,29 +1,44 @@
 /*
-MeTA -- a music-making architecture
-this is a script to create the filesystem structure
+# MeTA -- a structured environment for SuperCollider performance system development.
+(cc-by-ny) 2015 Till Bovermann,
 
-filesystem structure in subdir proto is installed (via unix command install).
+http://3DMIN.org | http://modality.github.io | http://tai-studio.org
 
+This is a script to create the basic MeTA filesystem structure.
+Please provide
 
-ToDo: add a way able to select which parts to
++ basePath    -- where should everything be installed to?
++ projectName -- the name of your project
+
+All files in subdirectory ```proto``` are installed via the unix-command ```install```.
+
+## ToDo
+
++ select which parts/feature-sets to install
++ GUI?
++ as Class?
+
 */
 
-q = ();
+var q = ();
 q.slash = Platform.pathSeparator;
 
 	// put path basePath for your setup here
 	// this path must exist.
 q.basePath = ("HOME".getenv +/+ "tmp").pathMatch.first;
+
 	// your project's name
 	// this name should be unique
-q.projectName = "blah";
+q.projectName = "MeTA-perform";
 
 q.mEtaDir = thisProcess.nowExecutingPath.dirname;
 q.mEtaProtoDir = q.mEtaDir +/+ "proto".standardizePath;
 
 
+// ---------------------- Assembly -------------------------------------
+
 // ---------------------- do not change anything below -----------------
-q.listCmd = "ls -1AbpP"; // print all files in a row, end dirs with "/"
+q.listCmd = "ls -1AbpP"; // print all files in a row, dirs have a trailing slash
 
 q.getSubDirs = {|q, path, parentDirs|
 	var paths = "% %".format(q.listCmd, path +/+ parentDirs).postln
@@ -47,7 +62,6 @@ q.getSubDirs = {|q, path, parentDirs|
 
 q.mEtaProtoFiles = q.getSubDirs(q.mEtaProtoDir, "").flatNoString; //WSlib dependancy
 
-// ---------------------- Assembly -------------------------------------
 
 q.projectDir = q.basePath +/+ q.projectName;
 
@@ -57,13 +71,20 @@ q.install = {|q, projectDir, protoDir, protos|
 		("file -b %".format(protoDir +/+ proto).unixCmdGetStdOut == "directory\n").if({
 			"install -d %".format(projectDir +/+ proto).postln.unixCmd;
 		}, {
-			"install -B .% -bC % %".format(
+			"install -B .%.old -bC % %".format(
 				stamp,
 				protoDir +/+ proto,
 				projectDir +/+ proto
 			).postln.unixCmd;
 		})
-	}
+	};
+
+	// write README.md as README-MeTA.md
+	"install -B .%.old -bC % %".format(
+		stamp,
+		q.mEtaDir +/+ "README.md",
+		projectDir +/+ "README-MeTA.md"
+	).postln.unixCmd;
 };
 
 q.install(q.projectDir, q.mEtaProtoDir, q.mEtaProtoFiles);
