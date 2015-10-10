@@ -28,7 +28,6 @@ Foldernames and filenames have an initial number that informs about the order of
         - q.dirnames = q.fulldirnames.collect { |path| path.basename };
     * notification methods
     * sample loading function
-
 + ```1_configs```
     * server configuration
     * network configuration
