@@ -3,7 +3,7 @@ q=q?();
 q.numChans = q.numChans ? 2;
 (
 // add your own fx stuff here!
-q.fx = IdentityDictionary
+q.mfx.fxDict = IdentityDictionary
 [
 
 	'3ring' -> { arg in, ringfr=100;
@@ -154,7 +154,7 @@ q.fx = IdentityDictionary
 );
 
 // add them to da Chain
-q.fx.keysValuesDo({ |key,val| // key.postcln;
+q.mfx.fxDict.keysValuesDo({ |key,val| // key.postcln;
 	ProxyChain.add(key.asSymbol, \filterIn -> val)
 });
 
@@ -265,29 +265,29 @@ Spec.specs.put(\compRatio, [1, 10, \exp, 0.1, 3].asSpec);
 /////make MAster FX
 
 (
-q.mFX = MasterFX.new(server: s,
+q.mfx.master = MasterFX.new(server: s,
 	numChannels: q.numChans,
-	slotNames: q.fx.keys.asArray.sort,
+	slotNames: q.mfx.fxDict.keys.asArray.sort,
 	busIndex: 0
 );
 
 // pre-set ons:
 
-q.mFX.pxChain.add('00_in', 1);
-q.mFX.pxChain.add('0_DBComp', 1);
-q.mFX.pxChain.add('ampFin', 1);
+q.mfx.master.pxChain.add('00_in', 1);
+q.mfx.master.pxChain.add('0_DBComp', 1);
+q.mfx.master.pxChain.add('ampFin', 1);
 
 
-q.guiMaFX = q.mFX.gui('ma master', 40);
-q.guiMaFX.moveTo(790, 1200);
+q.mfx.window = q.mfx.master.gui('ma master', 40);
+q.mfx.window.moveTo(790, 1200);
 );
 
 // tweak
-q.mFX.pxChain.proxy.fadeTime = 3;
+q.mfx.master.pxChain.proxy.fadeTime = 3;
 // add Panic Button?
 /*
-q.mFX .pxChain . dump
-q.mFX .pxChain . proxy.dump
+q.mfx.master .pxChain . dump
+q.mfx.master .pxChain . proxy.dump
 
 MasterFX.clear('localhost')
 */

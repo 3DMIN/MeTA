@@ -2,6 +2,7 @@
 "\n**********  loading serverConfig:  **********".postln;
 
 Server.default = s = Server.local;
+q.server = s;
 
 	// tweak for fast response and rare complaints:
 	// default is 0.2 secs, which feels slow;
@@ -21,7 +22,7 @@ s.latency = 0.05;
 
 "Setting server options: ".postln;
 if (s.serverRunning) {
-	q.warnWin(
+	q.utils.warnWin(
 		"Server options were set when s was running already!"
 		" Settings will not take effect until server is rebooted:"
 		"\ns.reboot;",
@@ -42,17 +43,4 @@ s
 .recChannels_(2)			// record stereo out only
 .recSampleFormat_("float"); // in float to recover from clipping
 
-q.postServerOptions = {
-	"********** Server info : **********".postln;
-	"s.name: % \n"
-	"s.address: % \n"
-	"s.latency: % \n"
-	.postf(s.name, s.addr, s.latency);
-	"server options:".postln;
-	s.options.dump;
-	"********************".postln;
-	"serverConfig loaded.".postln;
-	"********************".postln;
-};
-
-
+"";

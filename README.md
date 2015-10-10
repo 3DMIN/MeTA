@@ -1,6 +1,6 @@
 MeTA
 ====
-*as of 9.10.2015*
+*as of 10.10.2015*
 
 MeTA is a structured directory for [SuperCollider](http://supercollider.github.io) performance systems.
 
@@ -17,25 +17,30 @@ It essentially copies all items in the ```proto``` folder to a given project fol
 
 ## File system structure
 
-+ ```0_globals``` -- tools and utilities
-    * server config
-    * sample loading routine
-    * network config
-    * setting up master FX
+Foldernames and filenames have an initial number that informs about the order of their execution. If a files or folders have the same number, their execution does not rely on each other.
+
+
++ ```0_utils``` -- tools and utilities
     * variables to find/open all files easily
         - q.globalsDir = thisProcess.nowExecutingPath.dirname;
         - q.topDir = q.utilDir.dirname;
         - q.fulldirnames = (q.topDir +/+ "*/").pathMatch;
         - q.dirnames = q.fulldirnames.collect { |path| path.basename };
-    * preset management
-+ ```1_resources``` -- resources to load (samples/photos/...)
+    * notification methods
+    * sample loading function
+
++ ```1_configs```
+    * server configuration
+    * network configuration
+
++ ```2_resources``` -- resources to load (samples/photos/...)
     * subdirectory ```samples``` contains directories with sample-packs (maybe as well videos/images/texts/etc)
         - load sample-packs into ```Buffer```s via ```loadToBuffer```-util.
         - sample-Buffer accessible via ```q.samples[<dirname>][<samplename>]
     * subdirectory ```images``` contains images
     * subdirectory ```midi``` contains midi-files
     * ...
-+ ```2_engines``` -- (audio/video) engines
++ ```3_engines``` -- (audio/video) engines
     * typically ```Ndef```, ```Tdef```, or ```Pdef```
     * loading one file loads an entire process and its side-info in one go.
     * filename equals process-name + ```.scd```
@@ -49,7 +54,7 @@ It essentially copies all items in the ```proto``` folder to a given project fol
         - ```getSpec(<controlKey>)```  -- ```ControlSpec``` for a controlKey
             + set e.g. via ```Ndef(\blonk).addSpec(\blink, [1, 10, \exp]);```
     * does not ```play``` itself during loading.
-+ ```3_auxEfx``` -- aux-effects
++ ```3_efx``` -- effects (not yet implemented)
     * loading one file loads an entire effect and its side-info in one go.
     * filename equals process-name + ```.scd```
     * typically ```Ndef```
@@ -66,9 +71,11 @@ It essentially copies all items in the ```proto``` folder to a given project fol
             + set e.g. via ```Ndef(\blonk).addSpec(\blink, [1, 10, \exp]);```
     * does not ```play``` itself during loading.
     * assumes that all inputs are inserted via ```ProxySubmix(<filename>+'Aux')``` 
-+ ```4_controllers``` -- set-up of controllers
++ ```3_controllers``` -- set-up of controllers (not yet implemented)
     * grabs controllers
-+ ```5_mapping``` -- mapping strategies between sound engines and controllers.
++ ```4_sound_routing``` (not yet implemented)
+    * contains routing skeletons that connect ```engines``` and ```aux_efx```
++ ```5_mapping``` -- mapping strategies between sound engines and controllers. (not yet implemented)
     * establishes the mapping between processes and controllers.
     * Maybe like 
 ```
@@ -79,5 +86,4 @@ Ndef(\allArm).addHalo(\gamePadMap, (
     joyRY: \amp)
 );
 ```
-+ ```6_routing```
-    * contains routing skeletons that connect ```engines``` and ```aux_efx```
+
