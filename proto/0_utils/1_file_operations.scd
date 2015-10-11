@@ -33,3 +33,16 @@ q.utils.traversePathMatch = {|env, path, parentDirs /*, filters*/|
 		parentDirs.drop(1).drop(-1); // get rid of trailing slash
 	})
 };
+
+q.utils.getFilteredPaths = {|env, absolutePath, formats|
+	env.traversePathMatch(absolutePath, "")
+	.flatNoString.select{|path|
+		(path != "") &&
+		{path.contains(".DS_Store").not}
+		&& {
+			formats.inject(false, {|last, format|
+				last || path.toLower.endsWith(format)
+			})
+		}
+	};
+}
