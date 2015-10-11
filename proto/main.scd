@@ -10,52 +10,48 @@ q = q ? ();
 
 
 "0_utils/0_utils.scd".loadRelative;
-"0_utils/0_file_operations.scd".loadRelative;
-"0_utils/loadSampleFunc.scd".loadRelative;
-"1_configs/1_serverConfig.scd".loadRelative;
-"1_configs/2_networkConfig.scd".loadRelative;
+
+q.utils.loadDocs("utils",   ["loadSample*", "*file_op*"]);
+q.utils.loadDocs("configs", ["*server*", "*network*"]);
+
+// have a language config here as well?
+// this would have e.g.
+q.numChans = 2;
 
 
 /*
-"0_utils/0_utils.scd".resolveRelative.openOS;
-"0_utils/0_file_operations.scd".resolveRelative.openOS;
-"1_configs/1_serverConfig.scd".resolveRelative.openOS;
-"1_configs/2_networkConfig.scd".resolveRelative.openOS;
+q.utils.openDocs("utils",   ["*utils*", "*loadSample*", "*file_op*"]);
+q.utils.openDocs("configs", ["*server*", "*network*"]);
 */
 
 
 s.latency = nil;	// make the server respond to controls immediately;
-q.numChans = 2;
 
 s.waitForBoot({
 	q.utils.postServerOptions;
-	// q.pxmix = NdefMixer(s, 12);
-	// q.pxmix.skipjack.dt = 0.05;
-	// q.pxmix.moveTo(5, 5);
-	// ProxyMeter.addMixer(q.pxmix);
+
+	// load resources
+	/*q.utils.loadSamples("tack");*/
+
+	q.pxmix = NdefMixer(s, 12);
+	q.pxmix.skipjack.dt = 0.05;
+	q.pxmix.moveTo(5, 5);
+	ProxyMeter.addMixer(q.pxmix);
 //	s.scope(q.numChans).window.bounds_(Rect(700, 5, 261, 250));
 });
 
 
-
-
-
-
-// ----------------------------------
-
-
-// p = Ndef.dictFor(s); // p.push;
-//
-// // put this into globals .. or use in the interfaces used!
-// q.active = q.active ?? {()};
-// q.isActive = { |q, obj| q.active.any(_.includes(obj)) };
 );
 
+q.utils.loadSamples("tack", true)
+
+q.utils.openDocs("engines", "*chain*")
+
+
 (
-///////////    SOUNDS	  ///////////////////////
-// load some sound processes - put your own here
-"2_engines/fry*".loadRelative;
-"2_engines/dog*".loadRelative;
+///////////    ENGINES	  ///////////////////////
+
+q.utils.loadDocs("engines", ["*wiggler*"]);
 
 
 // get the loaded Ndefs by name

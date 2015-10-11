@@ -56,6 +56,59 @@ q.utils.postServerOptions = {
 	"********************".postln;
 };
 
+q.utils.loadedDocuments = ();
+
+q.dirnames.do{|name|
+	q.utils.loadedDocuments[name.asSymbol] = OrderedIdentitySet[];
+};
+
+q.utils.id2dirname = {|env, identifier|
+	q.dirnames.detect{|dir| dir.contains(identifier.asString)}
+};
+
+
+// returns a sorted array of absolute paths
+// identifier -- sstring
+// docs is an array of wildcard-strings
+q.utils.docPaths = {|env, identifier, docs|
+	var basePath = q.topDir +/+ env.id2dirname(identifier);
+
+	docs.bubble.flatNoString.collect{|doc|
+		(basePath +/+ doc.asString).pathMatch;
+	}.flatNoString.sort;
+};
+
+
+// opens docs
+q.utils.openDocs = {|env, identifier, docs|
+	env.docPaths(identifier, docs).do{|path|
+		Document.open(path);
+	}
+};
+
+
+// loads docs and collects return values in a dictionary
+q.utils.loadDocs = {|env, identifier, docs|
+	// load in alphabetical order
+	var paths = env.docPaths(identifier, docs);
+	var keys = paths.collect{|p| p.basename.asSymbol};
+
+	// book-keeping
+	q.utils.loadedDocuments[env.id2dirname(identifier).asSymbol].addAll(keys);
+
+	[keys, paths].flop.flatNoString.as(Event).collect(_.load)
+};
+
+
+
+/* tests
+q.utils.docPaths("ut", ["load*", "*file*"]).collect(_.basename);
+q.utils.openDocs("ut", ["load*", "*file*"]).collect(_.basename);
+q.utils.loadDocs("ut", ["load*", "*file*"])
+
+*/
+
+
 
 //
 // // a function to load relative paths, going up and down

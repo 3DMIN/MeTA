@@ -1,6 +1,6 @@
 MeTA
 ====
-*as of 10.10.2015*
+*as of 11.10.2015*
 
 MeTA is a structured directory for [SuperCollider](http://supercollider.github.io) performance systems.
 
@@ -12,8 +12,7 @@ It essentially copies all items in the ```proto``` folder to a given project fol
 ## Glossar
 
 + ```q``` -- global dictionary holding everything
-
-
++ ```q.utils``` -- dictionary of utilities. holds routines for e.g. loading samples, file system operations, or notification windows.
 
 ## File system structure
 
@@ -31,14 +30,6 @@ Foldernames and filenames have an initial number that informs about the order of
 + ```1_configs```
     * server configuration
     * network configuration
-
-+ ```2_resources``` -- resources to load (samples/photos/...)
-    * subdirectory ```samples``` contains directories with sample-packs (maybe as well videos/images/texts/etc)
-        - load sample-packs into ```Buffer```s via ```loadToBuffer```-util.
-        - sample-Buffer accessible via ```q.samples[<dirname>][<samplename>]
-    * subdirectory ```images``` contains images
-    * subdirectory ```midi``` contains midi-files
-    * ...
 + ```3_engines``` -- (audio/video) engines
     * typically ```Ndef```, ```Tdef```, or ```Pdef```
     * loading one file loads an entire process and its side-info in one go.
@@ -86,3 +77,13 @@ Ndef(\allArm).addHalo(\gamePadMap, (
 );
 ```
 
+
+## Other directories
+
++ ```resources``` -- contains data needed for the performance (samples/photos/...)
+    * subdirectory ```samples``` contains directories with sample-packs (maybe as well videos/images/texts/etc)
+        - load sample-packs into ```Buffer```s via ```q.utils.loadSamples```-utility.
+        - sample-Buffers accessible via ```q.samples.traverseAt(relPath.split.collect(_.asSymbol))[<samplename>]```
+    * subdirectory ```images``` contains images
+    * subdirectory ```midi``` contains midi-files
+    * subdirectory ```presets``` contains presets of the sound files (???)
