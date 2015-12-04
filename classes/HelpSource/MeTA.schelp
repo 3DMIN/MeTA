@@ -1,0 +1,303 @@
+TITLE:: MeTA
+summary:: A performance framework
+categories:: Undocumented classes
+related:: Classes/Ndef
+
+
+DESCRIPTION::
+
+MeTA is part of the MeTA performance framework. It facilitates integration of multiple software instruments ("generator"), external controllers ("controller") and their mapping ("mapping"). Further, it provides places for commonly used configurations ("config") and helpers.
+
+MeTA is designed with the link::Classes/Ndef:: environment in mind, though it should be possible to use it for other performance environments as well.
+
+CLASSMETHODS::
+
+METHOD:: new
+Create new MeTA object.
+
+ARGUMENT:: path
+the path to the structured MeTA directory
+
+ARGUMENT:: server
+the link::Classes/Server:: used for playing.
+
+
+INSTANCEMETHODS::
+
+METHOD:: guiWarnings
+if code::true::, display GUI warnings, Otherwise supress them.
+
+
+
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+
+subsection:: Paths
+
+METHOD:: topDir
+the path to the structured MeTA directory
+
+METHOD:: fulldirnames
+returns:: array of absolute paths to scripts.
+
+
+METHOD:: dirnames
+returns:: array of paths to scripts relative to link::#topDir::.
+
+
+METHOD:: resourcesDir
+returns:: path to resources relative to link::#topDir::.
+
+METHOD:: samplesDir
+returns:: path to samples directory relative to link::#topDir::.
+
+METHOD:: sampleFormats
+list of sample formats in the form code::[".wav", ".aiff"]:: (lower-case letters only).
+
+
+subsection:: Important Objects
+
+METHOD:: server
+the link::Classes/Server:: used for playing sound.
+
+subsection:: The Dictionaries
+
+METHOD:: config
+dictionary for configurations. Examples are network configuration and server configuration as well as user-specific configurations.
+This dictionary is intended for data only, additional functionality (i.e. helper functions to e.g. switch between  presets) should go to link::#utils::.
+
+
+METHOD:: utils
+dictionary for utility functions and their potential states. Examples are e.g. functions to switch between presets or instrument setups.
+
+METHOD:: gens
+dictionary for (sound-)generators. For now, link::Classes/Ndef::s are explicitely supported, other formats such as link::Classes/Tdef:: or link::Classes/Pdef:: may work as well.
+
+METHOD:: aux
+
+
+
+METHOD:: helpers
+METHOD:: samples
+METHOD:: maps
+METHOD:: efx
+METHOD:: ctls
+METHOD:: views
+
+
+
+
+
+
+
+subsection:: File handling
+
+
+METHOD:: filePaths
+
+ARGUMENT:: identifier
+The category (determined by the folder it is located in). Should be one of
+definitionlist::
+## util
+|| a utility
+## config
+|| a configuration file
+## controller
+|| an interface to a controller
+## efx
+|| effects
+## engine
+|| (sound) engine definition
+## mapping
+|| mapping directive
+## resource
+|| resource such as (audio) samples, images, or other data
+## helper
+|| helpers, tools, etc. for sounds and mapping (e.g. link::Classes/Ndef:: to compute Amplitudes etc.)
+::
+
+ARGUMENT:: docs
+Array of Document names without extension. Deliberately dis-allowing wildcards.
+
+ARGUMENT:: ext
+The extension of the documents.
+
+ARGUMENT:: warn
+link::Classes/Boolean::, warn for non-existent Document.
+
+returns:: sorted array of absolute paths
+
+
+
+METHOD:: openFiles
+open Files for editing.
+
+ARGUMENT:: identifier
+The category (determined by the folder it is located in). Should be one of
+definitionlist::
+## util
+|| a utility
+## config
+|| a configuration file
+## controller
+|| an interface to a controller
+## efx
+|| effects
+## engine
+|| (sound) engine definition
+## mapping
+|| mapping directive
+## resource
+|| resource such as (audio) samples, images, or other data
+## helper
+|| helpers, tools, etc. for sounds and mapping (e.g. link::Classes/Ndef:: to compute Amplitudes etc.)
+::
+
+ARGUMENT:: docs
+Array of Document names without extension. Deliberately dis-allowing wildcards.
+
+ARGUMENT:: ext
+The extension of the documents to be opened
+
+ARGUMENT:: warn
+link::Classes/Boolean::, warn for non-existent Document.
+
+
+METHOD:: loadFiles
+load Files. See also specific methods for generaotirs and aux-efx (below).
+
+ARGUMENT:: identifier
+The category (determined by the folder it is located in). Should be one of
+definitionlist::
+## util
+|| a utility
+## config
+|| a configuration file
+## controller
+|| an interface to a controller
+## efx
+|| effects
+## engine
+|| (sound) engine definition
+## mapping
+|| mapping directive
+## resource
+|| resource such as (audio) samples, images, or other data
+## helper
+|| helpers, tools, etc. for sounds and mapping (e.g. link::Classes/Ndef:: to compute Amplitudes etc.)
+::
+
+ARGUMENT:: docs
+Array of Document names without extension (fixed to ".scd").
+
+ARGUMENT:: warn
+link::Classes/Boolean::, warn for non-existent Document.
+
+returns:: an array of the return values of the file loading routine (i.e. the return value of the last command in the file).
+
+METHOD:: loadAux
+Load an aux-effect from a file in code::efx/aux::.
+A link::Classes/ProxySubmix:: is created automatically and all Gens available through link::#getNdefGens:: are connected to it.
+
+ARGUMENT:: name
+filename without extension (fixed to ".scd").
+
+ARGUMENT:: numChans
+number of channels of the aux-effect
+
+ARGUMENT:: defaultInGain
+initial gain for all connected gens.
+
+
+
+METHOD:: loadGen
+Load a (sound)generator from a file in the generators directory.
+
+ARGUMENT:: name
+filename without extension (fixed to ".scd").
+
+ARGUMENT:: index
+a unique index that may be used for addressing it.
+
+returns:: return value of the file loading routine (i.e. the return value of the last command in the file).
+
+
+
+subsection:: Helpers
+
+METHOD:: loadSamples
+load a subtree of the sample directory to link::#samples::.
+
+ARGUMENT:: relPath
+the path to the subtree relative to link::#sampleDir::
+
+ARGUMENT:: forceReload
+if true, force reloading of samples.
+
+
+METHOD:: selectGenerator
+selects a (sound) generator based on its key:
+list::
+## call code::\offFunc:: for every generator but the selected one
+## call code::\onFunc:: for the selected one
+::
+
+ARGUMENT:: genKey
+generator's key
+
+
+METHOD:: getNdefGens
+returns:: all Ndef's known to the system as generator (loaded via link::#loadGen::).
+
+
+subsection:: Informing
+
+METHOD:: postServerOptions
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+
+METHOD:: warnWin
+create a warning window
+
+ARGUMENT:: string
+content of the window
+
+ARGUMENT:: title
+window title
+
+METHOD:: loadedFiles
+returns:: a dictionary of all loaded files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EXAMPLES::
+
