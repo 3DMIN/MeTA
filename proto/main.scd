@@ -4,81 +4,112 @@ Server.killAll;
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 (
-(
-///////////    PREPARATION	  ///////////////////////
-q = q ? ();
-
-
-"0_utils/0_utils.scd".loadRelative;
-
-q.utils.loadDocs("utils",   ["loadSample*", "*file_op*"]);
-q.utils.loadDocs("configs", ["*server*", "*network*"]);
-
-// have a language config here as well?
-// this would have e.g.
-q.numChans = 2;
-
+///////////    UTILS	  ///////////////////////
+m = MeTA(path: thisProcess.nowExecutingPath.dirname, server: s);
 
 /*
-q.utils.openDocs("utils",   ["*utils*", "*loadSample*", "*file_op*"]);
-q.utils.openDocs("configs", ["*server*", "*network*"]);
+m.openFiles("configs",   ["3_userConfig"], warn: true);
+*/
+
+///////////    CONFIG	  ///////////////////////
+// configuration of your performance. give general information such as number of channels, server options etc.
+
+m.config.numChans = 2;
+
+m.loadFiles("configs", [
+	"1_serverConfig",
+	"2_networkConfig",
+	"3_userConfig"
+]);
+
+
+// boot server and load generators
+
+m.server.waitForBoot({
+/*
+m.server.boot;
+*/
+	//	m.server.scope(q.numChans).window.bounds_(Rect(700, 5, 261, 250));
+
+
+///////////   HELPER NDEFS  ///////////////////////
+	"loading HELPERS...".inform;
+	m.loadFiles("helperNdefs", ["amplitudeTracker"]);
+
+
+	///////////    GENERATORS	  ///////////////////////
+	"loading GENS...".inform;
+	m.loadGen("ringer" , 1);
+	m.loadGen("buzz"   , 2);
+	// m.loadGen("yourGen", 3);
+
+
+
+	// /////  play all Ndefs
+	// 0.5.wait;
+	// "play GENS...".inform;
+	// q.utils.getNdefs.do {|ndef|
+	// 	ndef.play;
+	// };
+	// 0.5.wait;
+	/*
+	q.utils.openFiles("gen", ["*"]); // */
+
+
+
+	///////////   AUX-EFFECTS   ///////////////////////
+	"loading AUX EFX...".inform;
+	m.loadAux(
+		name:          "reverbAux",
+		numChans:      m.config.numChans,
+		defaultInGain: 0.3
+	);
+
+	///////////   MASTER-EFFECTS   ///////////////////////
+	// q.utils.loadFiles("efx", ["*fx*", "*master*"]);
+
+});
+);
+
+(
+///////////    CONTROLLERS	  ///////////////////////
+"loading CONTROLLERS...".inform;
+
+m.loadFiles(\control, [
+	"NdefMixer",
+	"pushPullOSC",
+	"soundSelector-KeyPlayer"
+]);
+
+/*
+m.openFiles(\control, [
+"NdefMixer",
+"pushPullOSC",
+"soundSelector-KeyPlayer"
+]);
 */
 
 
-s.latency = nil;	// make the server respond to controls immediately;
-
-s.waitForBoot({
-	q.utils.postServerOptions;
-
-	// load resources
-	/*q.utils.loadSamples("tack");*/
-
-	q.pxmix = NdefMixer(s, 12);
-	q.pxmix.skipjack.dt = 0.05;
-	q.pxmix.moveTo(5, 5);
-	ProxyMeter.addMixer(q.pxmix);
-//	s.scope(q.numChans).window.bounds_(Rect(700, 5, 261, 250));
-});
-
-
-);
-
-q.utils.loadSamples("tack", true)
-
-q.utils.openDocs("engines", "*chain*")
-
-
-(
-///////////    ENGINES	  ///////////////////////
-
-q.utils.loadDocs("engines", ["*wiggler*"]);
-
-
-// get the loaded Ndefs by name
-// - change here to also get Tdefs, Pdefs
-// tell them to play, but keep amp at 0
-q.ndefs = q.getNdefs;
-q.ndefs.do {|ndef| ndef.set(\amp, 0).fadeTime_(1).play };
-);
-
-
-///////////    INTERFACES	  ///////////////////////
-
-(
-"4_controllers/makePresets*".loadRelative; /// makePresets
-"4_controllers/miniBees-xpee*".loadRelative; /// load all available miniBees with XPee boards such that they can be mapped below
-
-
-// Modality MIDI/HID - better choose just one for saf'ty !!
-
-
-);
-
-
 ///////////    MAPPING   	  ///////////////////////
+"loading MAPPING...".inform;
+(
+	m.loadFiles("map", [
+		"keyPlayerMapping"
+	]);
+);
+
+{m.utils.generatorSelectAction(m.getNdefGens.first.key);}.defer;
+
+
+);
+
 
 (
-"5_mapping/miniBee2fry*".loadRelative
-);
 
-);
+// Ndef('reverb').set('t60', 3.5432325262237, 'damp', 0.6, 'size', 0.72222222222222, 'earlydiff', 0.59444444444444, 'in', ProxySubmix('reverbAux'), 'mdepth', 44.166666666667, 'mfreq', 0.055555555555556);
+
+Ndef('reverb').set('t60', 1.9, 'damp', 0.2, 'size', 0.72222222222222, 'earlydiff', 0.59444444444444, 'in', ProxySubmix('reverbAux'), 'mdepth', 44.166666666667, 'mfreq', 0.055555555555556);
+
+
+)
+

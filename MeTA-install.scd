@@ -1,6 +1,6 @@
 /*
 # MeTA -- a structured environment for SuperCollider performance system development.
-(cc-by-ny) 2015 Till Bovermann,
+(cc-by-ny) 2015 Till Bovermann, ...
 
 http://3DMIN.org | http://modality.github.io | http://tai-studio.org
 
@@ -29,7 +29,7 @@ q.basePath = ("HOME".getenv +/+ "tmp").pathMatch.first;
 
 	// your project's name
 	// this name should be unique
-q.projectName = "MeTA-perform";
+q.projectName = "perform";
 
 q.mEtaDir = thisProcess.nowExecutingPath.dirname;
 q.mEtaProtoDir = q.mEtaDir +/+ "proto".standardizePath;

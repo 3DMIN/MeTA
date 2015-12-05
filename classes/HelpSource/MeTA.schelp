@@ -1,6 +1,6 @@
 TITLE:: MeTA
 summary:: A performance framework
-categories:: Undocumented classes
+categories:: performance framework
 related:: Classes/Ndef
 
 
@@ -9,6 +9,9 @@ DESCRIPTION::
 MeTA is part of the MeTA performance framework. It facilitates integration of multiple software instruments ("generator"), external controllers ("controller") and their mapping ("mapping"). Further, it provides places for commonly used configurations ("config") and helpers.
 
 MeTA is designed with the link::Classes/Ndef:: environment in mind, though it should be possible to use it for other performance environments as well.
+
+
+MeTA was developed at the 3DMIN project. http://3dmin.org
 
 CLASSMETHODS::
 
