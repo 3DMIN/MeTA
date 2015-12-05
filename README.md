@@ -1,7 +1,7 @@
 MeTA
 ====
 *as of 05.12.2015, Till Bovermann*
-[ [3DMIN](http://3DMIN.org) | [tai-studio](http://tai-studio.org) | [Modality](http://modalityteam.github.io/)]
+[ [TAI-studio](http://tai-studio.org) | [3DMIN](http://3DMIN.org) | [Modality](http://modalityteam.github.io/)]
 
 MeTA is a performance framework for [SuperCollider](http://supercollider.github.io). It consists of a guideline (this), a structured directory (directory: "proto") and a set of classes (directory "classes").
 
@@ -76,4 +76,9 @@ Common features such as directory and file access/evaluation are implemented in 
     * subdirectory ```images``` contains images
     * subdirectory ```midi``` contains midi-files
 
-## 
+## Acknowledgements
+
+Alberto de Campo and Hannes Hoelzl provided an initial structured directory and many of the configuration files and routines, as well as lots of valuable ideas.
+Dominik Hildebrand Marques Lopes and Amelie Hinrichsen did lots of testing and suggesting.
+
+3DMIN -- MeTA was initiated within [3DMIN](http://3dmin.org), a project funded by [Einsteinstiftung Berlin](http://www.einsteinfoundation.de/).
