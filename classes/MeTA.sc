@@ -161,7 +161,7 @@ MeTA {
 		config.genNames[index] = res.first.key;
 	}
 
-	loadAux { |name, numChans = 2, defaultInGain = 0|
+	loadAux { |name, numChans = 2, defaultInGain = 0, postVol = true|
 		r{
 			var res, ndef, auxBusName;
 			res = this.loadFiles("efx", ["aux/%".format(name)]);
@@ -172,7 +172,7 @@ MeTA {
 			0.5.wait;
 			ndef.map(\in, ProxySubmix(auxBusName));
 			this.getNdefGens.do {|gen|
-				ProxySubmix(auxBusName).addMix(gen, defaultInGain);
+				ProxySubmix(auxBusName).addMix(gen, defaultInGain, postVol);
 			};
 
 		}.play(AppClock)
