@@ -8,8 +8,10 @@ MeTA {
 	var <helpers;
 	var <efx;
 	var <aux;
+	var <auxBus;
 	var <views;
 	var <samples;
+	var <data;
 
 	var <>server;
 
@@ -44,10 +46,10 @@ MeTA {
 		gens 		= ();
 		efx 		= ();
 		aux 		= ();
+		auxBus      = ();
 		views 		= ();
 		samples 	= ();
-
-
+		data    	= ();
 	}
 
 	initPaths { |path|
@@ -81,7 +83,7 @@ MeTA {
 			loadedFiles[name.asSymbol] = OrderedIdentitySet[];
 		};
 
-	
+
 		"%:\n\ttopDir: %\n".format(
 			this.class,
 			topDir
@@ -103,7 +105,7 @@ MeTA {
 
 	/** returns a sorted array of absolute paths
 	identifier -- identifier for directory
-	docs       -- array of filenames, deliberately dis-allowing wildcards 
+	docs       -- array of filenames, deliberately dis-allowing wildcards
 	ext        -- file extension
 	warn       -- if true, show warning window in case a filename is not valid
 	*/
@@ -145,7 +147,7 @@ MeTA {
 
 // load files and collect return values
 	loadFiles {|identifier, docs, warn = true|
-		// load only .scd files, 
+		// load only .scd files,
 		// in alphabetical order
 		var paths = this.filePaths(identifier, docs, "scd", warn);
 		var keys = paths.collect{|p| p.basename.asSymbol};
@@ -174,7 +176,7 @@ MeTA {
 			this.getNdefGens.do {|gen|
 				ProxySubmix(auxBusName).addMix(gen, defaultInGain, postVol);
 			};
-
+			auxBus[auxBusName] = ProxySubmix(auxBusName);
 		}.play(AppClock)
 	}
 
@@ -186,24 +188,24 @@ MeTA {
 		},{
 			[]
 		});
-	
+
 		var loadSamples = {
 			absolutePath =
 				topDir +/+ samplesDir +/+ (relPath ? "");
-	
+
 			// get all paths to sound files
 			samplePaths = MeTA_Utils.getFilteredPaths(
 				absolutePath,
 				sampleFormats
 			);
-	
+
 			samplePaths.do{|path|
 				var sampleKeys, buffer;
-	
+
 				sampleKeys = baseKeyArray ++ path.splitext.first
 				.split(Platform.pathSeparator)
 				.collect(_.asSymbol);
-	
+
 				buffer = Buffer.read(
 					server,
 					absolutePath +/+ path,
@@ -214,7 +216,7 @@ MeTA {
 				samples.traversePut(sampleKeys, buffer);
 			};
 		};
-	
+
 		server.serverRunning.not.if{
 			"%:loadSamples: Server needs to be running.".format(this.class).inform;
 			^this;
@@ -245,16 +247,16 @@ MeTA {
 
 
 
-	
+
 	}
 
 	selectGenerator { |genKey|
-	
+
 		// turn off everything but selected gen
 		gens.select{|gen, key| key != genKey}.do{|gen|
 			gen.getHalo(\offFunc).value;
 		};
-	
+
 		// turn selected gen on
 		gens[genKey].getHalo(\onFunc).value;
 	}
