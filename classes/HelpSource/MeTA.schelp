@@ -6,9 +6,12 @@ related:: Classes/Ndef
 
 DESCRIPTION::
 
-MeTA is part of the MeTA performance framework. It facilitates integration of multiple software instruments ("generator"), external controllers ("controller") and their mapping ("mapping"). Further, it provides places for commonly used configurations ("config") and helpers.
+MeTA is part of the MeTA performance framework. It facilitates the integration of multiple software instruments ("generator"), external controllers ("controller") and their mapping ("mapping").
+It also provides places for commonly used configurations ("config") and helpers.
 
-MeTA is designed with the link::Classes/Ndef:: environment in mind, though it should be possible to use it for other performance environments as well.
+MeTA is designed with the link::Classes/Ndef:: environment in mind, though it should be possible to use it with other paradigms as well.
+
+To get started with MeTA, use the code::MeTA-install.scd:: script which will copy a barebone MeTA filestructure to a folder of your choice. Please refer to the code::README.md:: file for details.
 
 
 MeTA was developed at the 3DMIN project. http://3dmin.org
@@ -32,10 +35,7 @@ if code::true::, display GUI warnings, Otherwise supress them.
 
 
 
-(describe method here)
-
-returns:: (describe returnvalue here)
-
+Most of the below methods are intended to provide detailed information on the setup's configuration.
 
 subsection:: Paths
 
@@ -65,7 +65,13 @@ subsection:: Important Objects
 METHOD:: server
 the link::Classes/Server:: used for playing sound.
 
+
 subsection:: The Dictionaries
+
+These dictionaries offer spaces in which one can sort functionality depending on its meaning within the performance setup.
+Their use and contents are (apart from code::gens:: and code::aux::) solely in the hand of the user.
+It proofed useful to keep e.g. generators apart from effect since it makes it easy to switch on/off all effects at once, or display them in a separate window.
+
 
 METHOD:: config
 dictionary for configurations. Examples are network configuration and server configuration as well as user-specific configurations.
@@ -78,19 +84,38 @@ dictionary for utility functions and their potential states. Examples are e.g. f
 METHOD:: gens
 dictionary for (sound-)generators. For now, link::Classes/Ndef::s are explicitely supported, other formats such as link::Classes/Tdef:: or link::Classes/Pdef:: may work as well.
 
-METHOD:: aux
-
 
 
 METHOD:: helpers
+
+dictionary for helpers, i.e. server-side link::Classes/Ndef::s that are not making sound by themselves (like machine listening devices or VCAs that are shared by multiple generators and should therefore be permanently executed).
+
 METHOD:: samples
+
+dictionary holding sample buffers loaded with link::#loadSamples::
+
+
 METHOD:: maps
+
+dictionary holding mapping functions
+
+
 METHOD:: efx
+
+dictionary holding non-AUX effects.
+
+METHOD:: aux
+dictionary for AUX-effects loaded via link::#loadAux::. For now, link::Classes/Ndef::s are explicitely supported.
+
+
 METHOD:: ctls
+
+dictionary for control elements like code::MKtl::'s (from the Modality toolkit) or custom GUIs.
+
+
 METHOD:: views
 
-
-
+dictionary for views, e.g. GUI displays.
 
 
 
@@ -122,10 +147,10 @@ definitionlist::
 ::
 
 ARGUMENT:: docs
-Array of Document names without extension. Deliberately dis-allowing wildcards.
+Array of document names without extension. Deliberately dis-allowing wildcards (it just got very messy and its usage error-prone).
 
 ARGUMENT:: ext
-The extension of the documents.
+The extension of the documents (e.g. code::scd::).
 
 ARGUMENT:: warn
 link::Classes/Boolean::, warn for non-existent Document.
@@ -135,7 +160,7 @@ returns:: sorted array of absolute paths
 
 
 METHOD:: openFiles
-open Files for editing.
+opens the files for editing.
 
 ARGUMENT:: identifier
 The category (determined by the folder it is located in). Should be one of
@@ -159,17 +184,17 @@ definitionlist::
 ::
 
 ARGUMENT:: docs
-Array of Document names without extension. Deliberately dis-allowing wildcards.
+Array of document names without extension. Deliberately dis-allowing wildcards.
 
 ARGUMENT:: ext
 The extension of the documents to be opened
 
 ARGUMENT:: warn
-link::Classes/Boolean::, warn for non-existent Document.
+link::Classes/Boolean::, warn for non-existent document.
 
 
 METHOD:: loadFiles
-load Files. See also specific methods for generaotirs and aux-efx (below).
+load files. See also specific methods link::#loadAux:: and link::#loadGen::.
 
 ARGUMENT:: identifier
 The category (determined by the folder it is located in). Should be one of
@@ -193,19 +218,22 @@ definitionlist::
 ::
 
 ARGUMENT:: docs
-Array of Document names without extension (fixed to ".scd").
+Array of Document names without extension (deliberately fixed to ".scd").
 
 ARGUMENT:: warn
 link::Classes/Boolean::, warn for non-existent Document.
 
 returns:: an array of the return values of the file loading routine (i.e. the return value of the last command in the file).
 
+
+
+
 METHOD:: loadAux
 Load an aux-effect from a file in code::efx/aux::.
 A link::Classes/ProxySubmix:: is created automatically and all Gens available through link::#getNdefGens:: are connected to it.
 
 ARGUMENT:: name
-filename without extension (fixed to ".scd").
+filename without extension (deliberately fixed to ".scd").
 
 ARGUMENT:: numChans
 number of channels of the aux-effect
@@ -213,6 +241,7 @@ number of channels of the aux-effect
 ARGUMENT:: defaultInGain
 initial gain for all connected gens.
 
+returns:: the MeTA object.
 
 
 METHOD:: loadGen
@@ -222,9 +251,9 @@ ARGUMENT:: name
 filename without extension (fixed to ".scd").
 
 ARGUMENT:: index
-a unique index that may be used for addressing it.
+a unique index that may be used for addressing it. This is particularly useful to automatically map functionality to controllers like faderboxes.
 
-returns:: return value of the file loading routine (i.e. the return value of the last command in the file).
+returns:: the return value of the file loading routine (i.e. the return value of the last command in the file).
 
 
 
@@ -241,30 +270,33 @@ if true, force reloading of samples.
 
 
 METHOD:: selectGenerator
-selects a (sound) generator based on its key:
+selects a (sound) generator based on its key by evaluating
+
 list::
-## call code::\offFunc:: for every generator but the selected one
-## call code::\onFunc:: for the selected one
+## code::\offFunc:: for every generator but the selected one
+## code::\onFunc:: for the selected one
 ::
 
 ARGUMENT:: genKey
-generator's key
+the generator's key as given in link::#loadGen::
+
+
 
 
 METHOD:: getNdefGens
 returns:: all Ndef's known to the system as generator (loaded via link::#loadGen::).
 
 
+
+
 subsection:: Informing
 
 METHOD:: postServerOptions
-(describe method here)
-
-returns:: (describe returnvalue here)
+posts currenly active server options.
 
 
 METHOD:: warnWin
-create a warning window
+creates a warning window
 
 ARGUMENT:: string
 content of the window
