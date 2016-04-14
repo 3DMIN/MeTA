@@ -54,8 +54,8 @@ MeTA {
 
 	initPaths { |path|
 
-		(path.pathExists != \folder).if({
-			"%: path not a valid directory; Extiting.\n \t%\n".format(
+		(path.pathType != \folder).if({
+			"%: path not a valid directory; Exiting.\n \t%\n".format(
 				this.class,
 				path
 			).warn;
@@ -113,11 +113,11 @@ MeTA {
 		var basePath, paths, invalids;
 
 		basePath = topDir +/+ this.pr_id2dirname(identifier);
-		paths = docs.bubble.flatNoString.collect{|doc|
+		paths = docs.bubble.flatIf(_.isString.not).collect { |doc|
 			basePath +/+ "%.%".format(doc, ext);
-		}.flatNoString.sort;
+		}.flatIf(_.isString.not).sort;
 
-		invalids = paths.select{|p| p.pathExists != \file};
+		invalids = paths.select{|p| p.pathType != \file};
 		invalids.notEmpty.if{
 			warn.if{
 				this.warnWin(
@@ -128,7 +128,7 @@ MeTA {
 				^nil
 			};
 
-			paths = paths.select{|p| p.pathExists == \file};
+			paths = paths.select{|p| p.pathType == \file};
 
 		};
 
@@ -335,7 +335,7 @@ MeTA_Utils {
 
 	*getFilteredPaths { |absolutePath, formats|
 		^this.traversePathMatch(absolutePath, "")
-			.flatNoString.select{|path|
+			.flatIf(_.isString.not).select{|path|
 				(path != "") &&
 				{path.contains(".DS_Store").not}
 				&& {
