@@ -1,17 +1,16 @@
 MeTA
 ====
-*as of 06.04.2016, Till Bovermann*
+*as of 17.07.2016, Till Bovermann* (v. 0.1.0)
 [ [TAI-studio](http://tai-studio.org) | [3DMIN](http://3DMIN.org) | [Modality](http://modalityteam.github.io/)]
 
 MeTA is a performance framework for [SuperCollider](http://supercollider.github.io). It consists of a guideline (this), a structured directory (directory: "proto") and a set of classes (directory "classes").
 
 ## Install
 
-`MeTA-install.scd`
-allows to install MeTa for a new project.
-Evaluating it copies all items in the ```proto``` folder to a given project folder.
+The ```MeTAInstall``` class provides tools to install a structured directory in which you can set up your performance environment.
 
-PLEASE PROVIDE THE PATH TO YOUR FOLDER BEFORE BLINDLY EVALUATING THE FILE!
+```MeTAInstall.make(basePath: "/your/path", projectName: "projectName")```
+
 
 MeTA requires you to install the directory "classes" to the SuperCollider extensions folder. If you installed it via the Quarks system, this should already be the case.
 
